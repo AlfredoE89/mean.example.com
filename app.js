@@ -7,7 +7,9 @@ var mongoose = require('mongoose');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 var indexRouter = require('./routes/index');
+var Users = require('./models/users');
 var usersRouter = require('./routes/users');
 var apiUsersRouter = require('./routes/api/users');
 //call the config file
@@ -50,6 +52,7 @@ app.use(passport.session());
 //passport.use(Users.createStrategy());
 
 passport.serializeUser(function(user, done){
+  passport.use(Users.createStrategy());
   done(null,{
     id: user._id,
     username: user.username,
