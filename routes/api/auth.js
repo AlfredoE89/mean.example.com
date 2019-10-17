@@ -66,4 +66,9 @@ router.delete('/logout', function(req, res){
   return res.json({success: 'false'});
 });
 
+router.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/auth');
+});
+
 module.exports = router;
