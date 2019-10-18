@@ -99,6 +99,7 @@ var authApp = (function() {
           xhr.send(JSON.stringify(object));
           xhr.onload = function(){
             let data = JSON.parse(xhr.response);
+            // console.log(data)
             if(data.success===true){
               window.location.href = '/';
             }else{
@@ -126,6 +127,13 @@ var authApp = (function() {
 
         }
       }
+      //   return {
+    //   load: function(){
+    //     registrationForm();
+    //     postRequest('registrationForm', '/api/auth/register');
+    //     validate.registrationForm();
+    //   }
+    // }
     
     })();
     
@@ -145,52 +153,17 @@ var authApp = (function() {
       }
 
       return {
-        load: function(){
-
-          switch(window.location.hash){
-            case '#register':
-          registrationForm();
-          postRequest('registrationForm', '/api/auth/register');
-          validate.registrationForm();
-          break;
-
-          default:
-            loginForm();
-            postRequest('loginForm', '/api/auth/login');
-            break;
-          }
+        registrationForm: function(){
+          document.querySelector('#registrationForm input[type="submit"]').addEventListener(
+            'click',
+            function(){
+            confirmPasswordMatch();
+          });
         }
       }
     
     })();
     
-    var validate = (function() {
-    
-      function confirmPasswordMatch() {
-    
-        let pw = document.getElementById('password');
-        let cpw = document.getElementById('confirm_password');
-    
-        if(pw.value !== cpw.value){
-          cpw.setCustomValidity("Passwords do not match");
-        } else {
-          cpw.setCustomValidity("");
-        }
-    
-      }
-
-         return {
-    registrationForm: function(){
-      document.querySelector('#registrationForm input[type="submit"]').addEventListener(
-        'click',
-        function(){
-        confirmPasswordMatch();
-         });
-        }
-      }
-
-    })();
-
     authApp.load();
     
     window.addEventListener("hashchange", function(){
