@@ -33,18 +33,6 @@ gulp.task('build-main-js', function() {
   return merge(authApp);
 });
 
-gulp.task('build-users-js', function() {
-
-  var userApp = gulp.src([
-    'src/js/users.app.js',
-  ])
-  .pipe(concat('users.app.min.js'))
-  .pipe(uglify())
-  .pipe(gulp.dest('public/dist/js'));
-
-  return merge(userApp);
-});
-
 gulp.task('build-auth-js', function() {
 
   var authApp = gulp.src([
@@ -55,6 +43,19 @@ gulp.task('build-auth-js', function() {
   .pipe(gulp.dest('public/dist/js'));
 
   return merge(authApp);
+});
+
+
+gulp.task('build-users-js', function() {
+
+  var userApp = gulp.src([
+    'src/js/users.app.js',
+  ])
+  .pipe(concat('users.app.min.js'))
+  .pipe(uglify())
+  .pipe(gulp.dest('public/dist/js'));
+
+  return merge(userApp);
 });
 
 //Recompile SCSS/JS on save
