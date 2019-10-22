@@ -56,3 +56,9 @@ gulp.task('default', gulp.series('watch'));
 
 //Compile all CSS tasks
 gulp.task('build-css', gulp.series('build-main-css'));
+
+//Compile all JS tasks
+gulp.task('build-js', gulp.series(
+  'build-main-js',
+  'build-auth-js',
+));
