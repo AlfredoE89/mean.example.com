@@ -1,17 +1,5 @@
 var usersApp = (function() {
 
-  return {
-    load: function(){
-      alert('LOADED');
-    }
-  }
-
-})();
-
-usersApp.load();
-
-var usersApp = (function() {
-
   function viewUsers(){
   
     let uri = `${window.location.origin}/api/users`;
@@ -74,6 +62,7 @@ var usersApp = (function() {
   
       return {
         load: function(){
+          //alert('LOADED');
           viewUsers();
         }
       }
