@@ -60,7 +60,7 @@ var usersApp = (function() {
     }
   }
   
-      return {
+   return {
         load: function(){
           //alert('LOADED');
           viewUsers();
