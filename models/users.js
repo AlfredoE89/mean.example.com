@@ -58,3 +58,4 @@ Users.plugin(uniqueValidator);
 Users.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('Users', Users);
+

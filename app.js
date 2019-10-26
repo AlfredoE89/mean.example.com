@@ -3,23 +3,24 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+var apiUsersRouter = require('./routes/api/users');
+var apiArticlesRouter = require('./routes/api/articles');
+var LocalStrategy = require('passport-local').Strategy;
+var Users = require('./models/users');
+var apiAuthRouter = require('./routes/api/auth');
+var authRouter = require('./routes/auth');
+var articlesRouter = require('./routes/articles');
+
+var app = express();
+
+var config = require('./config.dev');
 var mongoose = require('mongoose');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var Users = require('./models/users');
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var apiUsersRouter = require('./routes/api/users');
-var authRouter = require('./routes/auth');
-
-//~line 16
-var apiAuthRouter = require('./routes/api/auth');
-var app = express();
-
-var config = require('./config.dev');
-// console.log(config);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,9 +32,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-//~line 32 before routes
 app.use(require('express-session')({
   //Define the session store
   store: new MongoStore({
@@ -48,17 +46,16 @@ app.use(require('express-session')({
     domain: config.cookie.domain,
     //httpOnly: true,
     //secure: true,
-    maxAge: 3600000 //1 hour
+    maxAge:3600000 //1 hour
   }
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
-//~line 55
+
 passport.use(Users.createStrategy());
-//~line 53
-passport.serializeUser(function (user, done) {
-  done(null, {
+
+passport.serializeUser(function(user, done){
+  done(null,{
     id: user._id,
     username: user.username,
     email: user.email,
@@ -67,18 +64,18 @@ passport.serializeUser(function (user, done) {
   });
 });
 
-passport.deserializeUser(function (user, done) {
+passport.deserializeUser(function(user, done){
   done(null, user);
 });
 
-app.use(function (req, res, next) {
+app.use(function(req,res,next){
   res.locals.session = req.session;
   next();
 });
 
 //~line 78
 //Session-based access control
-app.use(function (req, res, next) {
+app.use(function(req,res,next){
   //Uncomment the following line to allow access to everything.
   //return next();
 
@@ -87,7 +84,8 @@ app.use(function (req, res, next) {
   //exact matches.
   var whitelist = [
     '/',
-    '/auth'
+    '/auth',
+    '/articles'
   ];
 
   //req.url holds the current URL
@@ -95,27 +93,28 @@ app.use(function (req, res, next) {
   //-1, in this context means not found in the array
   //so if NOT -1 means is found in the whitelist
   //return next(); stops execution and grants access
-  if (whitelist.indexOf(req.url) !== -1) {
+  if(whitelist.indexOf(req.url) !== -1){
     return next();
   }
 
   //Allow access to dynamic endpoints
   var subs = [
     '/public/',
-    '/api/auth/'
+    '/api/auth/',
+    '/articles'
   ];
 
   //The query string provides a partial URL match beginning
   //at position 0. Both /api/auth/login and /api/auth/logout would would 
   //be considered a match for /api/auth/
-  for (var sub of subs) {
-    if (req.url.substring(0, sub.length) === sub) {
+  for(var sub of subs){
+    if(req.url.substring(0, sub.length)===sub){
       return next();
     }
   }
 
   //There is an active user session, allow access to all endpoints.
-  if (req.isAuthenticated()) {
+  if(req.isAuthenticated()){
     return next();
   }
 
@@ -127,15 +126,18 @@ app.use(function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/users', apiUsersRouter);
-app.use('/auth', authRouter);
 app.use('/api/auth', apiAuthRouter);
+app.use('/api/articles', apiArticlesRouter);
+app.use('/auth', authRouter);
+app.use('/articles', articlesRouter);
+
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
