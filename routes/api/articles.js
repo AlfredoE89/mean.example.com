@@ -30,7 +30,7 @@ router.get('/:id', function(req,res){
 router.post('/', function (req, res) {
     Articles.create(new Articles({
         title: req.body.title,
-        //slug: req.body.slug,
+        slug: req.body.slug,
         description: req.body.description,
         keywords: req.body.keywords,
         body: req.body.body,
